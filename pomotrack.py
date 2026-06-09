@@ -8,7 +8,7 @@ welcome = pyfiglet.figlet_format('POMOTRACK')
 todo_list = []
 
 #todo function
-def manage_tasks(todo):
+def manage_tasks(todo, width):
     while True:
         def get_terminal_width():
             return os.get_terminal_size().columns
@@ -55,8 +55,7 @@ def manage_tasks(todo):
                 if len(parts) > 1:
                     idx = int(parts[1]) #index '2' in 2 (int)
                     new_text_task = input('enter new text task: ')
-
-todo[idx] = new_text_task
+                    todo[idx] = new_text_task
                 else:
                     print('invalid index'.center(width))
             except IndexError:
@@ -69,13 +68,13 @@ todo[idx] = new_text_task
                 todo.append(new_task)
             else:
                 print('task cannot be empty'.center(width))  
-            print("\n" + " TASKS ".center(width, "="))
-            has_tasks = False
-            for index, task in enumerate(todo):
-                if task != 0:
-                    task_str = f'{index}. {task}'
-                    print(task_str.center(width))
-                    has_tasks = True
+        print("\n" + " TASKS ".center(width, "="))
+        has_tasks = False
+        for index, task in enumerate(todo):
+            if task != 0:
+                task_str = f'{index}. {task}'
+                print(task_str.center(width))
+                has_tasks = True
 
             #not tasks
             if not has_tasks:
@@ -83,7 +82,7 @@ todo[idx] = new_text_task
                 print('=' * width + '\n')
 
 
-def timer(minutes):
+def timer(minutes, width):
     end_time = time.time() + (minutes * 60)
     while time.time() < end_time:
         remaining = end_time - time.time()
@@ -122,8 +121,9 @@ while True:
         break
     action = manager.get(manage_inp) #func in manager
     if action:
-        action(manage_tasks)
+        action(todo_list, width)
     else:
         print('command not found!'.center(width))
 print(welcome)
+
 
