@@ -1,11 +1,28 @@
 #Early versions of the project can be found in my repository learn python / practice / function def /06_todo.py
 #imports
 import pyfiglet
+from pyfiglet import Figlet, FigletFont
 import os
 import time
-welcome = pyfiglet.figlet_format('POMOTRACK')
+
+welcome = r"""
+██████╗  ██████╗ ███╗   ███╗ ██████╗ ████████╗██████╗  █████╗  ██████╗██╗  ██╗
+██╔══██╗██╔═══██╗████╗ ████║██╔═══██╗╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██║ ██╔╝
+██████╔╝██║   ██║██╔████╔██║██║   ██║   ██║   ██████╔╝███████║██║     █████╔╝ 
+██╔═══╝ ██║   ██║██║╚██╔╝██║██║   ██║   ██║   ██╔══██╗██╔══██║██║     ██╔═██╗ 
+██║     ╚██████╔╝██║ ╚═╝ ██║╚██████╔╝   ██║   ██║  ██║██║  ██║╚██████╗██║  ██╗
+╚═╝      ╚═════╝ ╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+                                                                              
+"""
+#welcome = figlet_object.renderText('POMOTRACK')
 
 todo_list = []
+
+#in dev function
+def in_dev(*args, **kwargs):
+    width = os.get_terminal_size().columns
+    print('function in dev!'.center(width))
+    
 
 #todo function
 def manage_tasks(todo, width):
@@ -88,8 +105,12 @@ def timer(minutes, width):
         remaining = end_time - time.time()
         mins, secs = divmod(int(remaining), 60)
         timer_str = f'remaining: {mins:02d}:{secs:02d}'
-        print(timer_str.center(width), end='\r')
-        time.sleep(0.1)
+        
+        os.system('cls' if os.name == 'nt' else 'clear')
+        width = os.get_terminal_size().columns
+        print('\n' * 3)
+        print(timer_str.center(width))
+        time.sleep(0.5)
     print("time's up".center(width))
 
 work_time = 25
@@ -97,24 +118,48 @@ break_time = 5
 def pomodoro(todo, width):
     print('starting work session...'.center(width))
     timer(work_time, width)
-    print('starting break...'.center(get_terminal_width))
+    print('starting break...'.center(get_terminal_size().columns))
     timer(break_time, width)
 manager = {
     't': manage_tasks,
-    'p': pomodoro
+    'p': pomodoro,
+    'h': in_dev,
+    'd': in_dev,
+    'j': in_dev,
+    'o': in_dev,
+    's': in_dev
+
 }
 width = os.get_terminal_size().columns
 
-for line in welcome.split('\n'):
-    if line.strip():
-        print(line.center(width))
 while True:
+    os.system('cls' if os.name == 'nt' else 'clear')
     width = os.get_terminal_size().columns
-    print(""" 
-   pomodoro timer                                        p
-   to-do                                                 t
-   quit                                                  q
-""".center(width))
+    height = os.get_terminal_size().lines
+    menu_items = [ 
+    ('pomodoro timer', 'p'),
+    ('to-do', 't'),
+    ('habbit-tracker', 'h'),
+    ('diary', 'd'),
+    ('import-data-to-.json', 'j'),
+    ('import-data-to-Obsidian', 'o'),
+    ('settings', 's'),
+    ('quit', 'q')
+]
+    content_height = 5 + (len(menu_items) * 2)
+    top_padding = max(1, ((height - content_height) // 2) - 5)
+    print('\n' * top_padding)
+    for line in welcome.split('\n'):
+        if line.strip():
+            print(line.center(width))
+
+    print('\n' * 2)
+    for name, key in menu_items:
+        row = f'{name:<65}{key:>5}'
+        print(row.center(width))
+        print()
+
+    print('\n')
 
     manage_inp = input('enter a letter: ').strip()
     if manage_inp == 'q':
@@ -122,8 +167,12 @@ while True:
     action = manager.get(manage_inp) #func in manager
     if action:
         action(todo_list, width)
+        if action == in_dev:
+            time.sleep(2)
     else:
         print('command not found!'.center(width))
+        time.sleep(2)
 print(welcome)
+
 
 
